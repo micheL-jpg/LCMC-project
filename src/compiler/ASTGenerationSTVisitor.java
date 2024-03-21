@@ -84,7 +84,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 			n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
 			n.setLine(c.PLUS().getSymbol().getLine());
 		} else if (c.MINUS()!=null) {
-			n = new PlusNode(visit(c.exp(0)), visit(c.exp(1)));
+			n = new MinusNode(visit(c.exp(0)), visit(c.exp(1)));
 			n.setLine(c.MINUS().getSymbol().getLine());
 		}
 		return n;
