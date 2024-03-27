@@ -276,6 +276,8 @@ public class AST {
 		final List<ParNode> parlist;
 		final List<DecNode> declist;
 		final Node exp;
+		int offset;
+
 		MethodNode(String i, TypeNode rt, List<ParNode> pl, List<DecNode> dl, Node e) {
 			id=i;
 			retType=rt;
@@ -291,13 +293,15 @@ public class AST {
 
 	public static class ClassCallNode extends DecNode{
 
-		final String classId;
+		final String objectId;
 		final String methodId;
 		final List<Node> argList;
+
 		STentry entry;
+		STentry methodEntry;
 
 		public ClassCallNode(String classId, String methodId, List<Node> argList) {
-			this.classId = classId;
+			this.objectId = classId;
 			this.methodId = methodId;
 			this.argList = Collections.unmodifiableList(argList);
 		}
@@ -312,6 +316,8 @@ public class AST {
 
 		final String id;
 		final List<Node> argList;
+
+		STentry entry;
 
 		public NewNode(String id, List<Node> argList) {
 			this.id = id;
@@ -332,7 +338,7 @@ public class AST {
 		}
 	}
 
-	public static class ClassTypeNode extends DecNode {
+	public static class ClassTypeNode extends TypeNode {
 
 		final ArrayList<TypeNode> allFields;
 		final ArrayList<ArrowTypeNode> allMethods;
@@ -348,13 +354,12 @@ public class AST {
 		}
 	}
 
-	public static class MethodTypeNode extends DecNode {
+	public static class MethodTypeNode extends TypeNode {
 
-		final List<TypeNode> parlist;
-		final TypeNode ret;
-		MethodTypeNode(List<TypeNode> p, TypeNode r) {
-			parlist = Collections.unmodifiableList(p);
-			ret = r;
+		final ArrowTypeNode fun;
+
+		MethodTypeNode(ArrowTypeNode fun) {
+			this.fun = fun;
 		}
 
 		@Override
@@ -363,7 +368,7 @@ public class AST {
 		}
 	}
 
-	public static class RefTypeNode extends DecNode {
+	public static class RefTypeNode extends TypeNode {
 
 		final String id;
 
@@ -377,7 +382,7 @@ public class AST {
 		}
 	}
 
-	public static class EmptyTypeNode extends DecNode {
+	public static class EmptyTypeNode extends TypeNode {
 
 		@Override
 		public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
