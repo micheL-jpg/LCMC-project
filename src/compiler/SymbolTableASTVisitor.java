@@ -274,7 +274,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 			visit(method);
 //			STentry entry = new STentry(nestingLevel, method.getType(), decOffset++);
 //			virtualTable.put(method.id, entry);
-			classType.allMethods.add(method.offset, (ArrowTypeNode) virtualTable.get(method.id).type);
+			classType.allMethods.add(method.offset, ((MethodTypeNode) virtualTable.get(method.id).type).fun);
 		}
 
 		symTable.remove(nestingLevel--);
@@ -323,7 +323,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		STentry objectEntry = stLookup(n.objectId);
 
 		if (objectEntry == null) {
-			System.out.println("Object id " + n.objectId + " at line "+ n.getLine() +"used but not declared");
+			System.out.println("Object id " + n.objectId + " at line "+ n.getLine() +" used but not declared");
 			stErrors++;
 		} else {
 			if (objectEntry.type instanceof RefTypeNode) {
@@ -331,7 +331,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				STentry methodEntry = classTable.get(objectClassId).get(n.methodId);
 
 				if (methodEntry == null) {
-					System.out.println("Method id " + n.objectId + " at line "+ n.getLine() +"used but not declared");
+					System.out.println("Method id " + n.objectId + " at line "+ n.getLine() +" used but not declared");
 					stErrors++;
 				} else {
 					n.entry = objectEntry;
