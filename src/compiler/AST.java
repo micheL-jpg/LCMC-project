@@ -260,8 +260,8 @@ public class AST {
 		final String id;
 
 		public FieldNode(String id, TypeNode type) {
-			this.type = type;
 			this.id = id;
+			this.type = type;
 		}
 
 		@Override
