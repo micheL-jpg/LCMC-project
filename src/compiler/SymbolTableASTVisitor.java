@@ -336,6 +336,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 				} else {
 					n.entry = objectEntry;
 					n.methodEntry = methodEntry;
+					n.nl = nestingLevel;
 				}
 			} else {
 				System.out.println("Object id " + n.objectId + " at line " + n.getLine() + " is not a class");
