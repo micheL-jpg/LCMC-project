@@ -114,7 +114,7 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 	public TypeNode visitNode(CallNode n) throws TypeException {
 		if (print) printNode(n,n.id);
 		TypeNode t = visit(n.entry); 
-		if ( !(t instanceof ArrowTypeNode) || !(t instanceof MethodTypeNode))
+		if ( !(t instanceof ArrowTypeNode) && !(t instanceof MethodTypeNode))
 			throw new TypeException("Invocation of a non-function "+n.id,n.getLine());
 		ArrowTypeNode at;
 		if (t instanceof MethodTypeNode)

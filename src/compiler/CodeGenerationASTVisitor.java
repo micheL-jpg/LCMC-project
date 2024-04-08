@@ -367,7 +367,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 		String dispatchTableCode = null;
 		for (String label : dispatchTable) {
 			dispatchTableCode = nlJoin(dispatchTableCode,
-					"push"+label,
+					"push "+label,
 					"lhp",
 					"sw",
 					codeToIncrementHp());
@@ -430,7 +430,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 
 		return nlJoin(
 				argCode,
-				"push"+address,
+				"push "+address,
 				"lw",
 				"lhp",
 				"sw",
