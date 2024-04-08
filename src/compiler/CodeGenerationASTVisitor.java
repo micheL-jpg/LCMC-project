@@ -332,10 +332,9 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 			popDecl = nlJoin(popDecl,"pop");
 		}
 		for (int i=0;i<n.parlist.size();i++) popParl = nlJoin(popParl,"pop");
-		String funl = freshFunLabel();
 		putCode(
 				nlJoin(
-						funl+":",
+						n.label+":",
 						"cfp", // set $fp to $sp value
 						"lra", // load $ra value
 						declCode, // generate code for local declarations (they use the new $fp!!!)
@@ -351,7 +350,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 						"js"  // jump to popped address
 				)
 		);
-		return "push "+funl;
+		return null;
 	}
 
 	@Override
