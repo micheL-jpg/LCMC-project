@@ -244,9 +244,16 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 	@Override
 	public Node visitCldec(CldecContext c){
 		if (print) printVarAndProdName(c);
+
+		String superID = null;
+		int start = 1; // for the id cycle
+
 		List<FieldNode> fields = new ArrayList<>();
 		List<MethodNode> methods = new ArrayList<>();
-		for (int i=1, j=0; i < c.ID().size(); i++,j++) {
+
+		if (c.EXTENDS() != null ) superID=c.ID(start++).getText(); // if there is "extend" the id(1) is the superclass and the next ones are the fields
+
+		for (int i=start, j=0; i < c.ID().size(); i++,j++) {
 			FieldNode p = new FieldNode(c.ID(i).getText(),(TypeNode) visit(c.type(j)));
 			p.setLine(c.ID(i).getSymbol().getLine());
 			fields.add(p);
@@ -254,7 +261,7 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 		for (MethdecContext methodContext : c.methdec()) methods.add((MethodNode) visit(methodContext));
 		Node n = null;
 		if (c.ID().size() > 0) {
-			n = new ClassNode(c.ID(0).getText(), fields, methods);
+			n = new ClassNode(c.ID(0).getText(), superID, fields, methods);
 			n.setLine(c.CLASS().getSymbol().getLine());
 		}
 		return n;

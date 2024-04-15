@@ -242,10 +242,14 @@ public class AST {
 
 	public static class ClassNode extends DecNode {
 		final String id;
+		String superID;
+		STentry superEntry;
 		final List<FieldNode> fields;
 		final List<MethodNode> methods;
-		public ClassNode(String id, List<FieldNode> fields, List<MethodNode> methods) {
+
+		public ClassNode(String id, String superID, List<FieldNode> fields, List<MethodNode> methods) {
 			this.id = id;
+			this.superID = superID;
 			this.fields = Collections.unmodifiableList(fields);
 			this.methods = Collections.unmodifiableList(methods);
 		}
@@ -286,6 +290,9 @@ public class AST {
 			declist=Collections.unmodifiableList(dl);
 			exp=e;
 		}
+
+		void setType(TypeNode t) {type = t;}
+
 		@Override
 		public <S, E extends Exception> S accept(BaseASTVisitor<S, E> visitor) throws E {
 			return visitor.visitNode(this);
