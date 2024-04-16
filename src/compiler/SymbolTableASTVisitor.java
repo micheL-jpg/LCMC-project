@@ -340,6 +340,7 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 			}
 
 		}
+		n.typeNode = classType;
 
 		symTable.remove(nestingLevel--);
 		decOffset = prevNLDecOffset;

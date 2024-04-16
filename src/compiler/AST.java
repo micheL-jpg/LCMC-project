@@ -244,6 +244,7 @@ public class AST {
 		final String id;
 		String superID;
 		STentry superEntry;
+		ClassTypeNode typeNode;
 		final List<FieldNode> fields;
 		final List<MethodNode> methods;
 
