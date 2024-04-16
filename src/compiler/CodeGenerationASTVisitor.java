@@ -15,6 +15,8 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	CodeGenerationASTVisitor() {}
 	CodeGenerationASTVisitor(boolean debug) {super(false,debug);} //enables print for debugging
 
+	List<List<String>> dispatchTables = new ArrayList<>();
+
 	@Override
 	public String visitNode(ProgLetInNode n) {
 		if (print) printNode(n);
@@ -87,7 +89,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(IfNode n) {
 		if (print) printNode(n);
-	 	String l1 = freshLabel();
+		String l1 = freshLabel();
 	 	String l2 = freshLabel();		
 		return nlJoin(
 			visit(n.cond),
@@ -104,7 +106,7 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(EqualNode n) {
 		if (print) printNode(n);
-	 	String l1 = freshLabel();
+		String l1 = freshLabel();
 	 	String l2 = freshLabel();
 		return nlJoin(
 			visit(n.left),
@@ -356,12 +358,27 @@ public class CodeGenerationASTVisitor extends BaseASTVisitor<String, VoidExcepti
 	@Override
 	public String visitNode(ClassNode n) throws VoidException {
 	  	if (print) printNode(n);
-		List<String> dispatchTable = new ArrayList<>();
+		List<String> dispatchTable;
+
+		if (n.superID == null) { //no-inheritance
+			dispatchTable = new ArrayList<>();
+		} else { //inheritance
+			int superClassOffset = n.superEntry.offset;
+			dispatchTable = new ArrayList<>(dispatchTables.get(-superClassOffset-2));
+		}
 
 		for (MethodNode m : n.methods) {
 			visit(m);
-			dispatchTable.add(m.label);
+			// if there's an override I need to change the label of the method inside the dispatch table with the one created
+			// by the visit, otherwise, with a new method, I add its new label to the dispatch table
+			if (m.offset < dispatchTable.size()){
+				dispatchTable.set(m.offset, m.label);
+			} else {
+				dispatchTable.add(m.label);
+			}
 		}
+
+		dispatchTables.add(dispatchTable);
 
 		String dispatchTableCode = null;
 		for (String label : dispatchTable) {
