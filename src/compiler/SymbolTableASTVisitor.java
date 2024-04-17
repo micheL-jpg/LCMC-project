@@ -247,15 +247,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 		if (n.superID == null) {
 			classType = new ClassTypeNode(new ArrayList<>(), new ArrayList<>());
 			virtualTable = new HashMap<>();
-//			if (hm.put(n.id, new STentry(0, classType, decOffset--)) != null) {
-//				System.out.println("Class id " + n.id + " at line " + n.getLine() + " already declared");
-//				stErrors++;
-//			} else {// Add class map with id into the class table
-//				if (classTable.put(n.id, virtualTable) != null) {
-//					System.out.println("Class id " + n.id + " at line " + n.getLine() + " already in the class table");
-//					stErrors++;
-//				}
-//			}
 		} else { //inheritance
 			if (!classTable.containsKey(n.superID)) {
 				System.out.println("SuperClass id " + n.superID + " at line " + n.getLine() + " after extends declaration doesn't exist");
@@ -322,10 +313,6 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 					STentry entry = new STentry(nestingLevel, method.getType(), methodOffset);
 					method.offset = methodOffset;
 					virtualTable.put(method.id, entry);
-//					int newOffset = decOffset; //temporary saves the offset for the new methods
-//					decOffset = method.offset; //set the offset of the override method so the visit can use it for the entry creation
-//					visit(method); //visit the method
-//					decOffset = newOffset; // reset the offset to the previous value so if that next method is a new one is saved in the right "position"
 					classType.allMethods.set(method.offset, ((MethodTypeNode) method.getType()).fun);
 				}
 			} else { //new method
@@ -351,17 +338,9 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 	@Override
 	public Void visitNode(MethodNode n) throws VoidException {
 		if (print) printNode(n);
-//		Map<String, STentry> hm = symTable.get(nestingLevel);
 		List<TypeNode> parTypes = new ArrayList<>();
 		for (ParNode par : n.parlist) parTypes.add(par.getType());
 		n.setType(new MethodTypeNode(new ArrowTypeNode(parTypes,n.retType)));
-//		STentry entry = new STentry(nestingLevel, new MethodTypeNode(new ArrowTypeNode(parTypes,n.retType)), decOffset);
-		//inserimento di ID nella symtable
-//		if (hm.put(n.id, entry) != null) {
-//			System.out.println("Method id " + n.id + " at line "+ n.getLine() +" already declared");
-//			stErrors++;
-//		}
-//		n.offset = decOffset++;
 		//creare una nuova hashmap per la symTable
 		nestingLevel++;
 		Map<String, STentry> hmn = new HashMap<>();
