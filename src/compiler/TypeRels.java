@@ -15,12 +15,8 @@ public class TypeRels {
 	// valuta se il tipo "a" e' <= al tipo "b", dove "a" e "b" sono tipi di base: IntTypeNode o BoolTypeNode
 	public static boolean isSubtype(TypeNode a, TypeNode b) {
 
-		if (a instanceof RefTypeNode at && b instanceof RefTypeNode bt) {
-			// first check if the ref type refer to the same class
-			if (at.id.equals(bt.id)) return true;
-			// otherwise check if the class is a subtype
-			return checkSuperType(((RefTypeNode) a).id, ((RefTypeNode) b).id);
-		}
+		if (a instanceof RefTypeNode at && b instanceof RefTypeNode bt)
+			return checkSuperType(at.id, bt.id);
 
 		if (a instanceof ArrowTypeNode at && b instanceof ArrowTypeNode bt) {
 
@@ -39,7 +35,33 @@ public class TypeRels {
 	}
 
 	private static boolean checkSuperType(String a, String b) {
-		return a != null && b != null && (Objects.equals(superType.get(a), b) || checkSuperType(superType.get(a), b));
+		return a != null &&
+				b != null &&
+//				first check if the ref. types refer to the same class, otherwise check if the class is a subtype
+				(a.equals(b) || (Objects.equals(superType.get(a), b) || checkSuperType(superType.get(a), b)));
+	}
+
+	public static TypeNode lowestCommonAncestor(TypeNode a, TypeNode b) {
+
+		if (a instanceof EmptyTypeNode && b instanceof RefTypeNode) return b;
+
+		if (b instanceof EmptyTypeNode && a instanceof RefTypeNode) return a;
+
+		if (a instanceof RefTypeNode at && b instanceof RefTypeNode) {
+
+			var superClassId = at.id;
+
+			while (!superClassId.isEmpty()) {
+				var superClassType = new RefTypeNode(superClassId);
+				if (isSubtype(b, superClassType)) return superClassType;
+				superClassId = superType.get(superClassId) == null ? "" : superType.get(superClassId);
+			}
+		}
+
+		if (isSubtype(a, new IntTypeNode()) && isSubtype(b, new IntTypeNode()))
+			return (a instanceof IntTypeNode || b instanceof IntTypeNode) ? new IntTypeNode() : new BoolTypeNode();
+
+		return null;
 	}
 
 }

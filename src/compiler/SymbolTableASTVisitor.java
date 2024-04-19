@@ -295,11 +295,13 @@ public class SymbolTableASTVisitor extends BaseASTVisitor<Void,VoidException> {
 						stErrors++;
 					} else {
 						int prevOffset = virtualTable.get(field.id).offset;
+						field.offset = prevOffset;
 						STentry entry = new STentry(nestingLevel, field.getType(), prevOffset);
 						virtualTable.put(field.id, entry);
 						classType.allFields.set(-prevOffset-1, field.getType());
 					}
 				} else {//new field
+					field.offset = fieldOffset;
 					STentry entry = new STentry(nestingLevel, field.getType(), fieldOffset--);
 					virtualTable.put(field.id, entry);
 					classType.allFields.add(field.getType());

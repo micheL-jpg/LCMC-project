@@ -77,8 +77,10 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 			throw new TypeException("Non boolean condition in if",n.getLine());
 		TypeNode t = visit(n.th);
 		TypeNode e = visit(n.el);
-		if (isSubtype(t, e)) return e;
-		if (isSubtype(e, t)) return t;
+//		if (isSubtype(t, e)) return e;
+//		if (isSubtype(e, t)) return t;
+		var retType = lowestCommonAncestor(t,e);
+		if (retType != null) return retType;
 		throw new TypeException("Incompatible types in then-else branches",n.getLine());
 	}
 
@@ -275,24 +277,31 @@ public class TypeCheckEASTVisitor extends BaseEASTVisitor<TypeNode,TypeException
 			//update superType to say which is my superClass
 			superType.put(n.id, n.superID);
 
-			var superAllFields = ((ClassTypeNode) n.superEntry.type).allFields;
-			var superAllMethods = ((ClassTypeNode) n.superEntry.type).allMethods;
+			var parentCT = ((ClassTypeNode) n.superEntry.type);
 
-			// check that all my fileds are subType of the fields in my superClass
-			for (int i=0; i<superAllFields.size(); i++) {
-				if (!isSubtype(n.typeNode.allFields.get(i), superAllFields.get(i))) {
-					throw new TypeException("Different type for field '"+n.fields.get(i).id+"' number "+i+" in class "+n.id, n.getLine());
+			var superAllFields = parentCT.allFields;
+			var superAllMethods = parentCT.allMethods;
+
+			for (var field : n.fields) {
+				int pos = -field.offset-1;
+
+				if (pos < superAllFields.size()) {
+					if (!isSubtype(n.typeNode.allFields.get(pos), superAllFields.get(pos))) {
+						throw new TypeException("Different type for field '"+field.id+"' number "+pos+" in class "+n.id, n.getLine());
+					}
 				}
 			}
 
-			// check that all my methods are subType of the methods in my superClass
-			for (int i=0; i<superAllMethods.size(); i++) {
-				if (!isSubtype(n.typeNode.allMethods.get(i), superAllMethods.get(i))) {
-					throw new TypeException("Different type for method '"+n.methods.get(i).id+"' number "+i+" in class "+n.id, n.getLine());
+			for (var method : n.methods) {
+				int pos = method.offset;
+
+				if (pos < superAllFields.size()) {
+					if (!isSubtype(n.typeNode.allMethods.get(pos), superAllMethods.get(pos))) {
+						throw new TypeException("Different type for field '"+method.id+"' number "+pos+" in class "+n.id, n.getLine());
+					}
 				}
 			}
 		}
-
 
 		for (MethodNode method : n.methods) visit(method);
 		return null;
