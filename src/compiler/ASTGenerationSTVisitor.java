@@ -67,10 +67,10 @@ public class ASTGenerationSTVisitor extends FOOLBaseVisitor<Node> {
 
 		if (c.TIMES()!=null) {
 			n = new TimesNode(visit(c.exp(0)), visit(c.exp(1)));
-			n.setLine(c.TIMES().getSymbol().getLine());		// setLine added
+			n.setLine(c.TIMES().getSymbol().getLine());
 		} else if (c.DIV()!=null) {
 			n = new DivNode(visit(c.exp(0)), visit(c.exp(1)));
-			n.setLine(c.DIV().getSymbol().getLine());		// setLine added
+			n.setLine(c.DIV().getSymbol().getLine());
 		}
 
         return n;
